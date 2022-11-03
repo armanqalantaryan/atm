@@ -1,0 +1,4 @@
+/home/arman/ATM/obj/client/main.dep  /home/arman/ATM/obj/client/main.o: \
+ /home/arman/ATM/src/client/main.cpp \
+ /home/arman/ATM/src/client/iclientmanager.hpp \
+ /home/arman/ATM/src/client/isocket.hpp
