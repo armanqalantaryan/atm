@@ -1,16 +1,18 @@
 #include <iostream>
 #include <memory>
 
-#include "iclientmanager.hpp"
+#include "iusermanager.hpp"
 #include "isocket.hpp"
+
 using namespace std;
 
-unique_ptr<iClientManager> createClientManager(int card_number, int pin);
+unique_ptr<iUserManager> createUserManager(const std::string& card_number, const std::string& pin);
 std::unique_ptr<iSocket> createSocket();
+
 int main()
 {
     unique_ptr<iSocket> socket = createSocket();
-    socket->connectSocket();
+    socket->connect();
     do
     {
         cout << "New card registration, press 1" << endl;
@@ -26,7 +28,9 @@ int main()
         cout << "Enter pin: " << endl;
         std::string pin;
         cin >> pin;
-        unique_ptr<iClientManager> cm = createClientManager(card_number, pin);
+        unique_ptr<iUserManager> cm = createUserManager(card_number, pin);
+        
+        cm->connect_socket(createSocket());
 
         switch (choice)
         {
@@ -35,7 +39,6 @@ int main()
 
                     if (cm->process_registration())
                     {
-                        socket->sendMessage(socket->makeString(to_string(choice),card_number,pin));
                     }
                     else
                     {
@@ -49,8 +52,7 @@ int main()
                     if (cm->process_card())
                     {
                         bool exit = false;
-
-                        do 
+                        do
                         {
                             cout << endl;
                             cout << "Check balance, press 1" << endl;

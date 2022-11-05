@@ -1,11 +1,15 @@
+#include <memory>
 
-class iClientManager
+class iSocket;
+
+class iUserManager
 {
-    public:
+public:
     virtual bool process_registration() = 0;
     virtual bool process_card() = 0;
     virtual bool cash_in(int) = 0;
     virtual bool cash_out(int) = 0;
     virtual double get_balance() = 0;
-    virtual ~iClientManager();
+
+    virtual void connect_socket(std::unique_ptr<iSocket>) = 0;
 };
