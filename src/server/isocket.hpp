@@ -1,24 +1,13 @@
-//
-// Created by arman on 10/29/22.
-//
-#ifndef SERVER_SOCKET_H
-#define SERVER_SOCKET_H
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <sqlite3.h>
+#include <string>
 
 class iSocket {
 public:
-    virtual void closeSocket() = 0;
-    virtual int sendMessage(const stdLLstring&) = 0;
-    virtual bool receiveMessage() = 0;
-    virtual bool startServer() = 0;
+    virtual int bind() = 0;
+    virtual void listen() = 0;
+    virtual int accept() = 0;
 
+    virtual int sendMessage(const std::string&) = 0;
+    virtual int receiveMessage(char*) = 0;
 
-
+    virtual void close() = 0;
 };
-
-#endif //SERVER_SOCKET_H

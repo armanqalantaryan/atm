@@ -1,17 +1,27 @@
-#include "isocket.hpp"
 #include <iostream>
+#include <memory>
 
-std::unique_ptr<SocketImpl> createSocket(const int& );
+#include "iusermanager.hpp"
 
-int main(int argc, char *argv[])
+std::unique_ptr<iSocket> createSocket();
+std::unique_ptr<iUserManager> createUserManager();
+
+int main()
 {
-    if(argc != 2)
+    std::unique_ptr<iUserManager> um = createUserManager();
+    if(!um->connect_socket(createSocket()))
     {
-        std::cout << "Port is missing in arguments!" << std::endl;
+        std::cerr<<"Connection Error" <<std::endl;
     }
-    const int port = atoi(argv[1]);
 
-    unique_ptr<iSocket> socket = createSocket(port);
-
+    std::string str = "";
+    while(true)
+    {
+        while(um->receiveMessage(str)) 
+        {
+            std::cout << "************ Received **********" << str << std::endl;
+            break;
+        }
+    }
 
 }
