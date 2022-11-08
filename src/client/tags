@@ -1,0 +1,31 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+IP_ADDRESS	socket_impl.cpp	/^    const char *IP_ADDRESS = "localhost";$/;"	m	namespace:__anon1	file:
+PORT	socket_impl.cpp	/^    const int PORT = 1246;$/;"	m	namespace:__anon1	file:
+SocketImpl	socket_impl.cpp	/^    SocketImpl()$/;"	f	class:SocketImpl
+SocketImpl	socket_impl.cpp	/^class SocketImpl: public iSocket {$/;"	c	file:
+UserManagerImpl	userManager_impl.cpp	/^    UserManagerImpl(const std::string& card_number, const std::string& pin)$/;"	f	class:UserManagerImpl
+UserManagerImpl	userManager_impl.cpp	/^class UserManagerImpl : public iUserManager$/;"	c	file:
+close	socket_impl.cpp	/^    void close() $/;"	f	class:SocketImpl
+connect	socket_impl.cpp	/^    bool connect()$/;"	f	class:SocketImpl
+createSocket	socket_impl.cpp	/^std::unique_ptr<iSocket> createSocket() {$/;"	f
+createUserManager	userManager_impl.cpp	/^std::unique_ptr<iUserManager> createUserManager(const std::string& card_number, const std::string& pin)$/;"	f
+depends	Makefile	/^depends := $(patsubst %.cpp, $(obj)\/client\/%.dep, $(sources))$/;"	m
+iSocket	isocket.hpp	/^class iSocket {$/;"	c
+iUserManager	iusermanager.hpp	/^class iUserManager$/;"	c
+m_card_number	userManager_impl.cpp	/^    const std::string m_card_number;$/;"	m	class:UserManagerImpl	file:
+m_clientSd	socket_impl.cpp	/^    int m_clientSd;$/;"	m	class:SocketImpl	file:
+m_pin	userManager_impl.cpp	/^    const std::string m_pin;$/;"	m	class:UserManagerImpl	file:
+m_sendSockAddr	socket_impl.cpp	/^    sockaddr_in m_sendSockAddr;$/;"	m	class:SocketImpl	file:
+m_socket	userManager_impl.cpp	/^    std::unique_ptr<iSocket> m_socket;$/;"	m	class:UserManagerImpl	file:
+main	main.cpp	/^int main()$/;"	f
+makeString	userManager_impl.cpp	/^    std::string makeString(const std::string& choice,const std::string& message2,const std::string& message3) $/;"	f	namespace:__anon2
+objects	Makefile	/^objects := $(patsubst %.cpp, $(obj)\/client\/%.o, $(sources))$/;"	m
+receiveMessage	socket_impl.cpp	/^    bool receiveMessage() $/;"	f	class:SocketImpl
+sendMessage	socket_impl.cpp	/^    int sendMessage(const std::string& message)$/;"	f	class:SocketImpl
+sources	Makefile	/^sources := $(wildcard *.cpp)$/;"	m
+~UserManagerImpl	userManager_impl.cpp	/^    ~UserManagerImpl()$/;"	f	class:UserManagerImpl

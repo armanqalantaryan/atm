@@ -18,7 +18,7 @@
 namespace
 {
     const char *IP_ADDRESS = "localhost";
-    const int PORT = 1245;
+    const int PORT = 1253;
 }
 
 class SocketImpl: public iSocket {
@@ -32,7 +32,7 @@ public:
         : m_clientSd(socket(AF_INET, SOCK_STREAM, 0))
     {
         const auto& host = gethostbyname(IP_ADDRESS);
-
+        std::cout<<"socket id" << m_clientSd<<std::endl;
         m_sendSockAddr.sin_addr.s_addr =
                 inet_addr(inet_ntoa(*(struct in_addr*)*host->h_addr_list));
         m_sendSockAddr.sin_port = htons(PORT);
@@ -42,7 +42,7 @@ public:
 
     int sendMessage(const std::string& message)
     {
-        return send(m_clientSd, message.c_str(), sizeof(message), 0);
+        return send(m_clientSd, message.c_str(), message.size(), 0);
     }
 
     bool receiveMessage() 

@@ -43,16 +43,29 @@ class UserManagerImpl : public iUserManager
 
     bool process_registration() override
     {
-        //TODO
-        m_socket->sendMessage("");
+        std::string mes = makeString("1",m_card_number,m_pin);
+        std::cout << "Sending message ... " << mes << std::endl;
+        int response = m_socket->sendMessage(mes);
+        std::cout << "Sending message length ... " << response << std::endl;
          
-        
-        return true;
+        if(response > 0)
+        {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     bool process_card() override
     {
-        return true;
+        int response = m_socket->sendMessage(makeString("2",m_card_number,m_pin));
+
+        if(response > 0)
+        {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     bool cash_in(int) override
@@ -67,7 +80,14 @@ class UserManagerImpl : public iUserManager
 
     double get_balance() override
     {
-        return double();
+        int response = m_socket->sendMessage(makeString("3",m_card_number,m_pin));
+
+        if(response > 0)
+        {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     void connect_socket(std::unique_ptr<iSocket> socket) override
