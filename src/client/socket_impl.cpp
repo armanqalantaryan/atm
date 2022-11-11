@@ -18,7 +18,7 @@
 namespace
 {
     const char *IP_ADDRESS = "localhost";
-    const int PORT = 1253;
+    const int PORT = 1333;
 }
 
 class SocketImpl: public iSocket {
@@ -42,7 +42,7 @@ public:
 
     int sendMessage(const std::string& message)
     {
-        return send(m_clientSd, message.c_str(), message.size(), 0);
+        return ::send(m_clientSd, (char*)message.c_str(), message.length() + 1, 0);
     }
 
     bool receiveMessage() 
@@ -61,17 +61,10 @@ public:
         std::cout << "Connection closed!" << std::endl;
     }
 
-    bool connect()
+    int connect()
     {
-        int status = ::connect(m_clientSd,
-                             (sockaddr*) &m_sendSockAddr, sizeof(m_sendSockAddr));
-        if(status < 0)
-        {
-            return false;
-        }
-        std::cout << "Connected to the Server!" << std::endl;
-
-        return true;
+        return ::connect(m_clientSd,
+                (sockaddr*) &m_sendSockAddr, sizeof(m_sendSockAddr));
     }
 
 };

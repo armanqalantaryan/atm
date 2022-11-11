@@ -3,8 +3,11 @@
 
 #include "iusermanager.hpp"
 
+
 std::unique_ptr<iSocket> createSocket();
+std::unique_ptr<iDb> createDb();
 std::unique_ptr<iUserManager> createUserManager();
+
 
 int main()
 {
@@ -14,14 +17,13 @@ int main()
         std::cerr<<"Connection Error" <<std::endl;
     }
 
-    std::string str = "";
-    while(true)
+    if(!um->connect_db(createDb()))
     {
-        while(um->receiveMessage(str)) 
-        {
-            std::cout << "************ Received **********" << str << std::endl;
-            break;
-        }
+        std::cerr<<"Database Error" <<std::endl;
     }
 
+    while(true)
+    {
+        um->processMessage();
+    }
 }

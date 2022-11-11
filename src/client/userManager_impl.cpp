@@ -5,7 +5,13 @@
 #include <iostream>
 #include <bitset>
 
+using namespace std;
+
 namespace {
+
+    const string proc_reg = "1";
+    const string proc_card = "2";
+
 
     // helper function
     std::string makeString(const std::string& choice,const std::string& message2,const std::string& message3) 
@@ -23,17 +29,15 @@ namespace {
 
 class UserManagerImpl : public iUserManager
 {
-    const std::string m_card_number;
-    const std::string m_pin;
+    std::string m_card_number;
+    std::string m_pin;
 
     std::unique_ptr<iSocket> m_socket;
 
     public:
 
-    UserManagerImpl(const std::string& card_number, const std::string& pin)
-        : m_card_number(card_number)
-        , m_pin(pin)
-        , m_socket(nullptr)
+    UserManagerImpl()
+        :m_socket(nullptr)
     {}
 
     ~UserManagerImpl()
@@ -41,24 +45,32 @@ class UserManagerImpl : public iUserManager
         m_socket->close();
     }
 
+    bool setCredentials(const std::string& card_number, const std::string& pin) override
+    {
+        m_card_number = card_number;
+        m_pin = pin;
+
+        // TODO
+        return true;
+    }
+
     bool process_registration() override
     {
-        std::string mes = makeString("1",m_card_number,m_pin);
-        std::cout << "Sending message ... " << mes << std::endl;
+        std::string mes = proc_reg;
+        mes += m_card_number;
+        mes += m_pin;
+
         int response = m_socket->sendMessage(mes);
-        std::cout << "Sending message length ... " << response << std::endl;
          
-        if(response > 0)
-        {
-            return true;
-        } else {
-            return false;
-        }
+        return (response > 0) ? true : false;
     }
 
     bool process_card() override
     {
-        int response = m_socket->sendMessage(makeString("2",m_card_number,m_pin));
+        std::string mes = proc_card;
+        mes += m_card_number;
+        mes += m_pin;
+        int response = m_socket->sendMessage(mes);
 
         if(response > 0)
         {
@@ -90,14 +102,14 @@ class UserManagerImpl : public iUserManager
         }
     }
 
-    void connect_socket(std::unique_ptr<iSocket> socket) override
+    int connect_socket(std::unique_ptr<iSocket> socket) override
     {
         m_socket = std::move(socket);
-        m_socket->connect();
+        return m_socket->connect();
     }
 };
 
-std::unique_ptr<iUserManager> createUserManager(const std::string& card_number, const std::string& pin)
+std::unique_ptr<iUserManager> createUserManager()
 {
-    return std::unique_ptr<iUserManager>(new UserManagerImpl(card_number, pin));
+    return std::unique_ptr<iUserManager>(new UserManagerImpl());
 }

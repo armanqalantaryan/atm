@@ -10,15 +10,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <memory>
-#include <stdexcept>
-#include <strings.h>
+#include <cstring>
 
 using namespace std;
 
 namespace
 {
     const char *IP_ADDRESS = "localhost";
-    const int PORT = 1253;
+    const int PORT = 1333;
 }
 
 class SocketImpl: public iSocket {
@@ -61,47 +60,8 @@ public:
         m_clientSd = ::accept(m_serverSd, (sockaddr *)&clientSockaddr_in, &clientSockAddrSize);
         std::cout<<"server accept socket = " << m_clientSd <<std::endl;
         return m_clientSd;
+    }
         
-        /*if(m_clientSd < 0)
-        {
-            std::cout<<"Error accepting request from client!";
-            return false;
-        }*/
-    }
-
-    /*void initialize()
-    {
-        int rc;
-        char* sql;
-        rc = sqlite3_open("atm.db", &m_db);
-        if(rc)
-        {
-            std::cerr << "Can`t open database "<< std::endl << sqlite3_errmsg(m_db);
-        } else
-        {
-            std::cout << "Opened database successfully" << std::endl;
-        }
-
-        sql = "create table if not exists user("                    \
-          " card_number BIGINT primary key not null,"           \
-          " pin_code int not null,"                             \
-          " balance int not null"                               \
-          ");";
-
-        *//*      "               insert into user (card_number,pin_code,balance)" \
-          "             values (5510266988745563, 7860,561000);" \
-          "               insert into user (card_number,pin_code,balance)" \
-          "             values (7896632144785914, 9547,12000050);" \
-          "               insert into user (card_number,pin_code,balance)" \
-          "             values (7889965412233585, 8547,78500);" \
-          "               insert into user (card_number,pin_code,balance)" \
-          "             values (7889566221455895, 1114,754000);" \
-          "               insert into user (card_number,pin_code,balance)" \
-          "             values (7894555648897552, 5889,899600);";*//*
-
-        sqlite3_exec(m_db,sql, nullptr,0,0);
-    }
-*/
     void close() override
     {
         ::close(m_clientSd);
@@ -115,21 +75,15 @@ public:
         return send(m_clientSd, message.c_str(), sizeof(message), 0);
     }
 
-    int receiveMessage(char* buff) override
+    int receiveMessage(std::string& received_message) override
     {
-        cout << " 11111111111111 " << endl;
-        char b[1024];
-        int count;
+        char buff[128];
+        memset(buff, 0, sizeof(buff));
 
-        while ((count = ::recv(m_clientSd, (char*)&b, sizeof(b), 0) > 0))
-        {
-            cout << " 22222222222222 " << count << endl;
-            //break;
-        }
-        cout << " 333333333333333333 "  << count << endl;
-        //int res = recv(m_clientSd, *buff, 84, MSG_WAITALL);
-        //int res = recv(m_clientSd, *buff, 84, MSG_DONTWAIT);
-        return count;
+        int read = ::recv(m_clientSd, (char*)buff, sizeof(buff), 0);
+        std::string s(buff);
+        received_message = s;
+        return read;
     }
 };
 

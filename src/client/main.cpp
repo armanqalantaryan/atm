@@ -6,13 +6,18 @@
 
 using namespace std;
 
-unique_ptr<iUserManager> createUserManager(const std::string& card_number, const std::string& pin);
+unique_ptr<iUserManager> createUserManager();
 std::unique_ptr<iSocket> createSocket();
 
 int main()
 {
-    unique_ptr<iSocket> socket = createSocket();
-    socket->connect();
+    unique_ptr<iUserManager> um = createUserManager();
+    if (um->connect_socket(createSocket()) == -1)
+    {
+        cout << "Internal server error" << endl;
+        return -1;
+    }
+
     do
     {
         cout << "New card registration, press 1" << endl;
@@ -28,16 +33,19 @@ int main()
         cout << "Enter pin: " << endl;
         std::string pin;
         cin >> pin;
-        unique_ptr<iUserManager> cm = createUserManager(card_number, pin);
-        
-        cm->connect_socket(createSocket());
+
+        if (!um->setCredentials(card_number, pin))
+        {
+            cout << "Invalid credentials, try again " << endl;
+            continue;
+        }
 
         switch (choice)
         {
             case 1 :
                 {
 
-                    if (cm->process_registration())
+                    if (um->process_registration())
                     {
                     }
                     else
@@ -49,7 +57,7 @@ int main()
 
             case 2 :
                 {
-                    if (cm->process_card())
+                    if (um->process_card())
                     {
                         bool exit = false;
                         do
@@ -69,7 +77,7 @@ int main()
                                 case 1:
 
                                     {
-                                        double balance = cm->get_balance();
+                                        double balance = um->get_balance();
                                         cout << "Balance is: " << balance << endl;
                                     }
 
@@ -80,7 +88,7 @@ int main()
                                         cout << "Insert amount: "; 
                                         int amount;
                                         cin >> amount;
-                                        bool res =  cm->cash_in(amount);
+                                        bool res =  um->cash_in(amount);
                                         if (res)
                                             cout << "Your amount is successfully set" << endl;
                                         else
@@ -94,7 +102,7 @@ int main()
                                         cout << "Insert amount: "; 
                                         int amount;
                                         cin >> amount;
-                                        bool res =  cm->cash_out(amount);
+                                        bool res =  um->cash_out(amount);
                                         if (res)
                                             cout << "Take your cash!" << endl;
                                         else

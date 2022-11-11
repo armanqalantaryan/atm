@@ -7,7 +7,7 @@ public:
     virtual int accept() = 0;
 
     virtual int sendMessage(const std::string&) = 0;
-    virtual int receiveMessage(char*) = 0;
+    virtual int receiveMessage(std::string&) = 0;
 
     virtual void close() = 0;
 };
