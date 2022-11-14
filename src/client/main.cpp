@@ -12,6 +12,7 @@ std::unique_ptr<iSocket> createSocket();
 int main()
 {
     unique_ptr<iUserManager> um = createUserManager();
+
     if (um->connect_socket(createSocket()) == -1)
     {
         cout << "Internal server error" << endl;
@@ -27,12 +28,35 @@ int main()
         cin >> choice;
 
         std::string card_number;
-        cout << "Enter card number: " << endl;
-        cin >> card_number;
-
-        cout << "Enter pin: " << endl;
         std::string pin;
-        cin >> pin;
+        do
+        {
+            cout << "Enter card number: " << endl;
+            cin >> card_number;
+            if (card_number.size() != 12)
+            {
+                cout << "Invalid card input, must be 12 symbols" << endl;
+                continue;
+            }
+            break;
+        }
+        while(true);
+
+
+        do 
+        {
+            cout << "Enter pin: " << endl;
+            cin >> pin;
+
+            if (pin.size() != 4)
+            {
+                cout << "Invalid pin input, must be 4 symbols" << endl;
+                continue;
+            }
+
+            break;
+
+        } while(true);
 
         if (!um->setCredentials(card_number, pin))
         {
@@ -44,7 +68,7 @@ int main()
         {
             case 1 :
                 {
-
+                    std::cout << " choice 1" << std::endl;
                     if (um->process_registration())
                     {
                     }

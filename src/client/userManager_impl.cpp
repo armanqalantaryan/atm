@@ -59,7 +59,7 @@ class UserManagerImpl : public iUserManager
         std::string mes = proc_reg;
         mes += m_card_number;
         mes += m_pin;
-
+        std::cout<<" sent message"<< mes<<std::endl;
         int response = m_socket->sendMessage(mes);
          
         return (response > 0) ? true : false;

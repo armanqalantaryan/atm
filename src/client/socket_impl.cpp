@@ -18,7 +18,7 @@
 namespace
 {
     const char *IP_ADDRESS = "localhost";
-    const int PORT = 1333;
+    const int PORT = 1345;
 }
 
 class SocketImpl: public iSocket {

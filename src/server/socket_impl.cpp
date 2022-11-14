@@ -17,7 +17,7 @@ using namespace std;
 namespace
 {
     const char *IP_ADDRESS = "localhost";
-    const int PORT = 1333;
+    const int PORT = 1345;
 }
 
 class SocketImpl: public iSocket {
@@ -35,14 +35,13 @@ public:
         m_servAddr.sin_family = AF_INET;
         m_servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
         m_servAddr.sin_port = htons(PORT);
-        //initialize();
     }
 
     virtual int bind() override
     {
         int bindStatus = ::bind(m_serverSd, (struct sockaddr*) &m_servAddr,
                               sizeof(m_servAddr));
-        std::cout<<"server bind  "<<m_serverSd<<std::endl;
+        std::cout<<"server bind  "<<bindStatus<<std::endl;
         return bindStatus;
     }
 

@@ -27,33 +27,48 @@ public:
         }
 
         std::string sql = "create table if not exists user("    \
-          " card_number BIGINT primary key not null,"           \
-          " pin_code int not null,"                             \
-          " balance int not null"                               \
+          " card_number TEXT  not null,"           \
+          " pin TEXT not null,"                             \
+          " balance TEXT not null"                               \
           ");";
 
         rc = sqlite3_exec(m_db, sql.c_str(), nullptr, 0, &Errmsg);
+        std::cout<< "INIT code ******" << rc <<std::endl;
 
         return (rc == 0) ? true : false;
     }
 
-    int writeCallback(void* data, int argc, char** argv,char** ColName)
+    int readCallback(void* data, int argc, char** argv,char** ColName)
     {
         return 0;
     }
 
-    bool write(const std::string& identifier, const std::string& writable) override
+    bool write(const std::string& identifier, const std::string& value) override
     {
         char* Errmsg = 0;
         int rc;
         std::string sql = "INSERT INTO user (card_number, pin, balance) "  \
-              "VALUES (1, 'Paul', 32, 'California', 20000.00 ); ";
+              "VALUES (";
+        sql += "'" + identifier + "',";
+        sql += "'" + value + "',";
+        sql += "'0' """")" ;
+
+        std::cout<< "*** SQL code ******" << sql <<std::endl;
+
         rc = sqlite3_exec(m_db, sql.c_str(), nullptr, 0, &Errmsg);
+        std::cout<< "write code ******" << rc <<std::endl;
         return (rc == 0) ? true : false;
     }
 
-    std::string read() override
+    std::string read(const std::string& identifier) override
     {
+        char* Errmsg = 0;
+        int rc;
+        std::string sql = "SELECT  FROM user (card_number, pin, balance) "  \
+              "VALUES ('124587555555', '2222', '0' ); ";
+        rc = sqlite3_exec(m_db, sql.c_str(), nullptr, 0, &Errmsg);
+        std::cout<< "write code ******" << rc <<std::endl;
+
         return std::string();
     }
 };

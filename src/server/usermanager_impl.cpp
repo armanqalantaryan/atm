@@ -17,24 +17,20 @@ public:
     {
         string received_message;
         int read = m_socket->receiveMessage(received_message);
-
-        cout << "*** Reveived message *** " << received_message << endl;
-
-        if(received_message.length() != 17) {
-            std::cout << "Invalid message" << std::endl;
-            return;
-        }
-        m_card_number = received_message.substr(1,12);
-        m_pin = received_message.substr(13,4);
-        if (read > 0)
+        if(read > 0)
         {
+            m_card_number = received_message.substr(1,12);
+            std::cout<<" card_number ----  " << m_card_number<<std::endl;
+            m_pin = received_message.substr(13);
+            std::cout<<" pin ----  " << m_pin<<std::endl;
+
             // TODO
            auto process_type = received_message[0];
 
            if (process_type == '1')
            {
+               std::cout << "in process message" << std::endl;
                cardRegistration();
-               // TODO registration
            }
            else if (process_type == '2')
            {
@@ -57,6 +53,7 @@ public:
 
         if(m_socket->bind() < 0)
         {
+            std::cout<<"bind error"<<std::endl;
             return false;
         }
 
@@ -78,9 +75,11 @@ private:
     {
         cout << "*** In process regstration  *** " << endl;
         int sent;
-        if(m_db->write(m_card_number,m_pin))
+        if(m_db->write(m_card_number, m_pin))
         {
-           sent = m_socket->sendMessage("1");
+            cout << "*** DB Written *** " << endl;
+           //sent = m_socket->sendMessage("1");
+           sent = 1;
         }
         return (sent > 0) ? true : false;
     }
