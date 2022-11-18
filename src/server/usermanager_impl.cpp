@@ -1,50 +1,37 @@
 #include <iostream>
+#include <cassert>
 
 #include "iusermanager.hpp"
+#include "utilities.hpp"
 
 using namespace std;
+
+
+namespace {
+
+    const string DB_NAME = "atm.db";
+    const string TABLE_NAME = "user";
+    const string COL_CARD_NUMBER = "card_number";
+    const string COL_PIN = "pin";
+    const string COL_BALANCE = "balance";
+}
 
 class UserManagerImpl : public iUserManager
 {
     std::unique_ptr<iSocket> m_socket;
-    std::unique_ptr<iDb> m_db;
+    std::unique_ptr<iSqlDB> m_db;
     std::string m_card_number;
     std::string m_pin;
+    string m_received_message;
 
 public:
 
-    void processMessage() override
-    {
-        string received_message;
-        int read = m_socket->receiveMessage(received_message);
-        if(read > 0)
-        {
-            m_card_number = received_message.substr(1,12);
-            std::cout<<" card_number ----  " << m_card_number<<std::endl;
-            m_pin = received_message.substr(13);
-            std::cout<<" pin ----  " << m_pin<<std::endl;
-
-            // TODO
-           auto process_type = received_message[0];
-
-           if (process_type == '1')
-           {
-               std::cout << "in process message" << std::endl;
-               cardRegistration();
-           }
-           else if (process_type == '2')
-           {
-               //TODO process card
-           }
-
-        }
-
-    }
-
-    bool connect_db(std::unique_ptr<iDb> db) override
+    bool connect_db(std::unique_ptr<iSqlDB> db) override
     {
        m_db = std::move(db);
-       return m_db->init();
+       m_db->connect(DB_NAME);
+       auto res = m_db->runSql(makeSql("create table if not exists", TABLE_NAME, "(", COL_CARD_NUMBER, "TEXT,", COL_PIN, "TEXT,", COL_BALANCE, "TEXT);"));
+       return (res.second == 0) ? true : false;
     }
 
     bool connect_socket(std::unique_ptr<iSocket> socket) override
@@ -69,24 +56,50 @@ public:
         return true;
     }
 
-private:
-
-    bool cardRegistration()
+    void processMessage() override
     {
-        cout << "*** In process regstration  *** " << endl;
-        int sent;
-        if(m_db->write(m_card_number, m_pin))
+        int received = m_socket->receiveMessage(m_received_message);
+        if(received > 0)
         {
-            cout << "*** DB Written *** " << endl;
-           //sent = m_socket->sendMessage("1");
-           sent = 1;
+            m_card_number = m_received_message.substr(1,12);
+            m_pin = m_received_message.substr(13, 4);
+
+            auto process_type = m_received_message[0];
+
+            if (process_type == '1')
+            {
+                cardRegistration();
+            }
+            else if (process_type == '2')
+            {
+                //TODO process card
+            }
         }
-        return (sent > 0) ? true : false;
     }
 
-    bool cardCheck()
+private:
+
+    void cardRegistration()
     {
-        return true;
+        auto res = m_db->runSql(makeSql("select", COL_CARD_NUMBER,"from", TABLE_NAME,
+                    "where", COL_CARD_NUMBER , "=", m_card_number));
+
+        if(res.first.empty())
+        {
+            auto user_reg = m_db->runSql(makeSql("insert", "into", TABLE_NAME, "(", COL_CARD_NUMBER, ",", COL_PIN,  ",",  COL_BALANCE, ")",
+                        "values", "(", m_card_number, ",", m_pin, ",", "0",")"));
+            if(user_reg.second > 0)
+            {
+                std::cout << "DB error" << std::endl;
+                throw;
+            }
+            cout << "*** DB Written *** " << endl;
+        } 
+        else
+        {
+            std::cout << "Card number already exists" << std::endl;
+            // send to client
+        }
     }
 
 };

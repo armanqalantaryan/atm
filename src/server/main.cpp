@@ -5,7 +5,7 @@
 
 
 std::unique_ptr<iSocket> createSocket();
-std::unique_ptr<iDb> createDb();
+std::unique_ptr<iSqlDB> createDb();
 std::unique_ptr<iUserManager> createUserManager();
 
 
@@ -15,15 +15,25 @@ int main()
     if(!um->connect_socket(createSocket()))
     {
         std::cerr<<"Connection Error" <<std::endl;
+        return -1;
     }
 
     if(!um->connect_db(createDb()))
     {
         std::cerr<<"Database Error" <<std::endl;
+        return -1;
     }
 
     while(true)
     {
-        um->processMessage();
+        try 
+        {
+            um->processMessage();
+        }
+        catch (...)
+        {
+            std::cout << "Thrown exception\n";
+            break;
+        }
     }
 }

@@ -17,7 +17,7 @@ using namespace std;
 namespace
 {
     const char *IP_ADDRESS = "localhost";
-    const int PORT = 1345;
+    const int PORT = 1348;
 }
 
 class SocketImpl: public iSocket {
@@ -79,10 +79,10 @@ public:
         char buff[128];
         memset(buff, 0, sizeof(buff));
 
-        int read = ::recv(m_clientSd, (char*)buff, sizeof(buff), 0);
+        int bytes = ::recv(m_clientSd, (char*)buff, sizeof(buff), 0);
         std::string s(buff);
         received_message = s;
-        return read;
+        return bytes;
     }
 };
 
