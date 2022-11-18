@@ -58,6 +58,7 @@ public:
 
     std::pair<std::vector<std::vector<std::string>>, int> runSql(const std::string& sql) override
     {
+        std::cout << "** RUN SQL *** " << sql << std::endl;
         char* Errmsg = 0;
         const int  rc = sqlite3_exec(m_db,sql.c_str(), runSqlCallback , 0, &Errmsg);
         
@@ -66,7 +67,7 @@ public:
             return {{},rc};
         }
 
-        return std::make_pair(sql_result_table, rc);
+        return std::pair<std::vector<std::vector<std::string>>, int>(move(sql_result_table), rc);
     }
 };
 
