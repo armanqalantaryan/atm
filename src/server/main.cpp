@@ -24,16 +24,5 @@ int main()
         return -1;
     }
 
-    while(true)
-    {
-        try 
-        {
-            um->processMessage();
-        }
-        catch (...)
-        {
-            std::cout << "Thrown exception\n";
-            break;
-        }
-    }
+    um->startServer();
 }

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <functional>
+#include <cassert>
 
 #include "sqlite3.h"
 
@@ -47,12 +48,14 @@ public:
 
     static int runSqlCallback(void * data, int argc, char** argv, char** Colname)
     {
+        assert(argc != 0);
+
         sql_result_table.push_back(std::vector<std::string>());
-        auto table = sql_result_table.back();
         for(int i = 0; i < argc; i++)
         {
-            table.push_back(argv[i]);
+            sql_result_table.back().push_back(argv[i]);
         }
+
         return 0;
     }
 
@@ -66,7 +69,7 @@ public:
         {
             return {{},rc};
         }
-
+        std::cout<< "sql ended normally" << std::endl;
         return std::pair<std::vector<std::vector<std::string>>, int>(move(sql_result_table), rc);
     }
 };

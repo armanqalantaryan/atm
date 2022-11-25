@@ -1,30 +1,21 @@
-
 #include "iusermanager.hpp"
 #include "isocket.hpp"
 
 #include <iostream>
-#include <bitset>
+#include <cassert>
 
 using namespace std;
 
 namespace {
 
-    const string proc_reg = "1";
-    const string proc_card = "2";
-
-
-    // helper function
-    std::string makeString(const std::string& choice,const std::string& message2,const std::string& message3) 
-    {
-        std::bitset<4> b1(stoi(choice));
-        std::bitset<64> b2(stoi(message2));
-        std::bitset<16> b3(stoi(message3));
-        std::cout <<"Data to send choice" << b1<<"  card "<< b2<<"  pin "<< b3  << std::endl;
-        std::string res = b1.to_string();
-        res += b2.to_string() + b3.to_string();
-        return res ;
-    }
-
+    const std::string PROCESS_REGISTRATION = "1";
+    const std::string PROCESS_CARD = "2";
+    const std::string get_bal = "3";
+    const std::string PROCESS_CASHIN = "4";
+    const std::string PROCESS_CASHOUT = "5";
+    const std::string ex_msg = "6";
+    const std::string OK = "1";
+    const std::string NOT_OK = "2";
 }
 
 class UserManagerImpl : public iUserManager
@@ -45,61 +36,220 @@ class UserManagerImpl : public iUserManager
         m_socket->close();
     }
 
-    bool setCredentials(const std::string& card_number, const std::string& pin) override
+    void runAtm() override
     {
+
+        do
+        {
+            cout << "New card registration, press 1" << endl;
+            cout << "Enter card number, press 2" << endl;
+
+            int choice;
+            cin >> choice;
+            setCredentials();
+
+            switch (choice)
+            {
+                case 1 :
+                {
+                    if(process_registration())
+                    {
+                        std::cout << "Card Registered" << std::endl;
+                    }
+                    else
+                    {
+                        std::cout <<"Card Already exists. Try Another Card Number" << std::endl;
+                        continue;
+                    }
+                }
+                break;
+
+                case 2 :
+                {
+                    if (process_card())
+                    {
+                        bool exit = false;
+                        do
+                        {
+                            cout << endl;
+                            cout << "Check balance, press 1" << endl;
+                            cout << "Cash in, press 2" << endl;
+                            cout << "Cash out, press 3" << endl;
+                            cout << "Exit, press 4" << endl;
+                            cout << endl;
+
+                            int choice = 0;
+                            cin >> choice;
+
+                            switch (choice)
+                            {
+                                case 1:
+                                {
+                                    double balance = get_balance();
+                                    cout << "Balance is: " << balance << endl;
+                                }
+                                break;
+
+                                case 2:
+                                {
+                                    cout << "Insert amount: ";
+                                    int amount;
+                                    cin >> amount;
+                                    bool res = cash_in(amount);
+                                    if (res)
+                                        cout << "Your amount is successfully set" << endl;
+                                    else
+                                        cout << "Failed transaction" << endl;
+                                }
+                                break;
+
+                                case 3:
+                                {
+                                    cout << "Insert amount: ";
+                                    int amount;
+                                    cin >> amount;
+                                    bool res = cash_out(amount);
+                                    if (res)
+                                        cout << "Take your cash!" << endl;
+                                    else
+                                        cout << "Failed transaction" << endl;
+                                }
+                                break;
+
+                                case 4:
+                                {
+                                    exit = true;;
+                                }
+                            }
+
+                        } while (!exit);
+
+                    }
+                    else
+                    {
+                        cout << "Invalid card number or pin, try again" << endl;
+                        continue;
+                    }
+                }
+                break;
+            }
+
+        } while(true);
+
+    }
+    void setCredentials() override
+    {
+        std::string card_number;
+        std::string pin;
+        do
+        {
+            cout << "Enter card number: " << endl;
+            cin >> card_number;
+            if (card_number.size() != 12)
+            {
+                cout << "Invalid card input, must be 12 symbols" << endl;
+                continue;
+            }
+            break;
+        }
+        while(true);
+
+        do
+        {
+            cout << "Enter pin: " << endl;
+            cin >> pin;
+
+            if (pin.size() != 4)
+            {
+                cout << "Invalid pin input, must be 4 symbols" << endl;
+                continue;
+            }
+
+            break;
+
+        } while(true);
+
         m_card_number = card_number;
         m_pin = pin;
-
-        // TODO
-        return true;
     }
 
     bool process_registration() override
     {
-        std::string mes = proc_reg;
+        std::string mes = PROCESS_REGISTRATION;
         mes += m_card_number;
         mes += m_pin;
-        std::cout<<" sent message"<< mes<<std::endl;
-        int response = m_socket->sendMessage(mes);
-         
-        return (response > 0) ? true : false;
+        int res = m_socket->sendMessage(mes);
+
+        assert(res > 0);
+
+        res = m_socket->receiveMessage(mes);
+        assert(res > 0);
+
+        return (mes == "1") ? true : false;
     }
 
     bool process_card() override
     {
-        std::string mes = proc_card;
+        std::string mes = PROCESS_CARD;
         mes += m_card_number;
         mes += m_pin;
         int response = m_socket->sendMessage(mes);
+        assert(response > 0);
+        
+        response = m_socket->receiveMessage(mes);
+        assert(response > 0);
 
-        if(response > 0)
-        {
-            return true;
-        } else {
-            return false;
-        }
+        return mes == OK ? true : false;
     }
 
-    bool cash_in(int) override
+    bool cash_in(int amount) override
     {
-        return true;
+        std::string mes = PROCESS_CASHIN;
+        mes += m_card_number;
+        mes += m_pin;
+        mes += to_string(amount);
+        int response = m_socket->sendMessage(mes);
+        assert(response > 0);
+        
+        response = m_socket->receiveMessage(mes);
+        assert(response > 0);
+
+        return mes == OK ? true : false;
     }
 
-    bool cash_out(int) override
+    bool cash_out(int amount) override
     {
-        return true;
+        std::string mes = PROCESS_CASHOUT;
+        mes += m_card_number;
+        mes += m_pin;
+        mes += to_string(amount);
+        int response = m_socket->sendMessage(mes);
+        assert(response > 0);
+
+        response = m_socket->receiveMessage(mes);
+        assert(response > 0);
+
+        return mes == OK ? true : false;
     }
 
     double get_balance() override
     {
-        int response = m_socket->sendMessage(makeString("3",m_card_number,m_pin));
+        std::string mes = get_bal;
+        mes += m_card_number;
+        mes += m_pin;
+        int response = m_socket->sendMessage(mes);
 
-        if(response > 0)
+        if(response < 0)
         {
-            return true;
-        } else {
-            return false;
+            throw;
         }
+        response = m_socket->receiveMessage(mes);
+        std::cout << "balance is -----   " << mes << std::endl;
+        if(response < 0)
+        {
+            throw;
+        }
+         return atoi(mes.c_str());
     }
 
     int connect_socket(std::unique_ptr<iSocket> socket) override
@@ -111,5 +261,5 @@ class UserManagerImpl : public iUserManager
 
 std::unique_ptr<iUserManager> createUserManager()
 {
-    return std::unique_ptr<iUserManager>(new UserManagerImpl());
+    return std::make_unique<UserManagerImpl>();
 }

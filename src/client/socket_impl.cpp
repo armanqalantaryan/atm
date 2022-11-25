@@ -5,20 +5,17 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <stdlib.h>
 #include <unistd.h>
-#include <string.h>
 #include <netdb.h>
-#include <sys/time.h>
 #include <memory>
+#include <cstring>
 
 #include "isocket.hpp"
-#include <stdexcept>
 
 namespace
 {
     const char *IP_ADDRESS = "localhost";
-    const int PORT = 1348;
+    const int PORT = 1371;
 }
 
 class SocketImpl: public iSocket {
@@ -45,13 +42,15 @@ public:
         return ::send(m_clientSd, (char*)message.c_str(), message.length() + 1, 0);
     }
 
-    bool receiveMessage() 
+    bool receiveMessage(std::string& received_message)
     {
         std::cout << "Awaiting server response..." << std::endl;
-        //FIXME Need to be improved
-        int message;
-        int status = recv(m_clientSd, (char*)&message, sizeof(message), 0);
-        std::cout << message << std::endl;
+        char buff[124];
+        memset(buff, 0, sizeof(buff));
+
+        int status = recv(m_clientSd, (char*)buff, sizeof(buff), 0);
+        std::string s(buff);
+        received_message = s;
         return status;
     }
 

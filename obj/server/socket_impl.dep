@@ -1,0 +1,3 @@
+/home/arman/ATM/obj/server/socket_impl.dep  /home/arman/ATM/obj/server/socket_impl.o: \
+ /home/arman/ATM/src/server/socket_impl.cpp \
+ /home/arman/ATM/src/server/isocket.hpp

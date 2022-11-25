@@ -1,23 +1,19 @@
-//
-// Created by arman on 10/29/22.
-//
-
-#include "isocket.hpp"
-
 #include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <memory>
 #include <cstring>
+
+#include "isocket.hpp"
+
 
 using namespace std;
 
 namespace
 {
     const char *IP_ADDRESS = "localhost";
-    const int PORT = 1348;
+    const int PORT = 1371;
 }
 
 class SocketImpl: public iSocket {
@@ -67,7 +63,6 @@ public:
         ::close(m_serverSd);
         std::cout << "Connection closed..." << std::endl;
     }
-
 
     int sendMessage(const std::string& message) override
     {
