@@ -13,7 +13,39 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ab550d99-7cd0-4b02-8845-118f39c74b1c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/socket_impl.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/socket_impl.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../bin/atm.db" beforeDir="false" afterPath="$PROJECT_DIR$/../../bin/atm.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../bin/client" beforeDir="false" afterPath="$PROJECT_DIR$/../../bin/client" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../bin/server" beforeDir="false" afterPath="$PROJECT_DIR$/../../bin/server" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../obj/client/main.dep" beforeDir="false" afterPath="$PROJECT_DIR$/../../obj/client/main.dep" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../obj/client/main.o" beforeDir="false" afterPath="$PROJECT_DIR$/../../obj/client/main.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../obj/client/socket_impl.dep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../obj/client/socket_impl.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../obj/client/userManager_impl.dep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../obj/client/userManager_impl.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../obj/server/main.dep" beforeDir="false" afterPath="$PROJECT_DIR$/../../obj/server/main.dep" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../obj/server/main.o" beforeDir="false" afterPath="$PROJECT_DIR$/../../obj/server/main.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../obj/server/socket_impl.dep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../obj/server/socket_impl.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../obj/server/sqldb_impl.dep" beforeDir="false" afterPath="$PROJECT_DIR$/../../obj/server/sqldb_impl.dep" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../obj/server/sqldb_impl.o" beforeDir="false" afterPath="$PROJECT_DIR$/../../obj/server/sqldb_impl.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../obj/server/usermanager_impl.dep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../obj/server/usermanager_impl.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/client.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/isocket.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/iclientsocket.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/iusermanager.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/iclientusermanager.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/socket_impl.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/clientsocket_impl.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/userManager_impl.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/clientuserManager_impl.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/isocket.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../server/iserversocket.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/isqldb.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../server/isqldb.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/iusermanager.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../server/iserverusermanager.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../server/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/socket_impl.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../server/serversocket_impl.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/sqldb_impl.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../server/sqldb_impl.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/usermanager_impl.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../server/serverusermanager_impl.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../server/utilities.hpp" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +88,12 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/home/arman/ATM/src/server&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -71,7 +108,9 @@
       <workItem from="1667568452643" duration="2976000" />
       <workItem from="1667727055308" duration="1799000" />
       <workItem from="1667809630855" duration="19401000" />
-      <workItem from="1668688779751" duration="30497000" />
+      <workItem from="1668688779751" duration="31138000" />
+      <workItem from="1671367035404" duration="677000" />
+      <workItem from="1671447127196" duration="10499000" />
     </task>
     <servers />
   </component>

@@ -1,0 +1,5 @@
+/home/arman/ATM/obj/server/serverusermanager_impl.dep  /home/arman/ATM/obj/server/serverusermanager_impl.o: \
+ /home/arman/ATM/src/server/serverusermanager_impl.cpp \
+ /home/arman/ATM/src/server/iserverusermanager.hpp \
+ /home/arman/ATM/src/server/iserversocket.hpp \
+ /home/arman/ATM/src/server/isqldb.hpp

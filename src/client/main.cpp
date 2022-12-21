@@ -1,23 +1,20 @@
 #include <iostream>
-#include <memory>
 
-#include "iusermanager.hpp"
-#include "isocket.hpp"
+#include "iclientusermanager.hpp"
+#include "iclientsocket.hpp"
 
-using namespace std;
-
-unique_ptr<iUserManager> createUserManager();
-std::unique_ptr<iSocket> createSocket();
+std::unique_ptr<iClientUserManager> createClientUserManager();
+std::unique_ptr<iClientSocket> createClientSocket();
 
 int main()
 {
-    unique_ptr<iUserManager> um = createUserManager();
+    std::unique_ptr<iClientUserManager> cum = createClientUserManager();
 
-    if (um->connect_socket(createSocket()) == -1)
+    if (cum->connectSocket(createClientSocket()) == -1)
     {
-        cerr << "Internal server error" << endl;
+        std::cerr << "Internal server error" << std::endl;
         return -1;
     }
-    um -> runAtm();
+    cum->runAtm();
     return 0;
 }

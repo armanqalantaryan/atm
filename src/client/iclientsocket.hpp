@@ -1,5 +1,5 @@
 
-class iSocket {
+class iClientSocket {
 public:
     virtual int connect() = 0;
     virtual void close() = 0;

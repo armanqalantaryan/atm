@@ -4,13 +4,24 @@
 #include <cassert>
 
 #include "sqlite3.h"
-
 #include "isqldb.hpp"
-#include "utilities.hpp"
 
 namespace 
 {
     std::vector<std::vector<std::string>> sql_result_table;
+
+    int runSqlCallback(void * data, int argc, char** argv, char** Colname)
+    {
+        assert(argc != 0);
+
+        sql_result_table.push_back(std::vector<std::string>());
+        for(int i = 0; i < argc; i++)
+        {
+            sql_result_table.back().push_back(argv[i]);
+        }
+
+        return 0;
+    }
 }
 
 class SqlDBImpl: public iSqlDB
@@ -35,31 +46,17 @@ public:
 
     bool close() override
     {
-        /*int rc = sqlite3_close(dbName, &m_db);
+        int rc = sqlite3_close(m_db);
         if(rc)
         {
             std::cerr << "Can`t open database "<< std::endl << sqlite3_errmsg(m_db);
             return false;
-        }*/
-
-        return true;
-
-    }
-
-    static int runSqlCallback(void * data, int argc, char** argv, char** Colname)
-    {
-        assert(argc != 0);
-
-        sql_result_table.push_back(std::vector<std::string>());
-        for(int i = 0; i < argc; i++)
-        {
-            sql_result_table.back().push_back(argv[i]);
         }
 
-        return 0;
+        return true;
     }
 
-    std::pair<std::vector<std::vector<std::string>>, int> runSql(const std::string& sql) override
+    SQL_TABLE runSql(const std::string& sql) override
     {
         std::cout << "** RUN SQL *** " << sql << std::endl;
         char* Errmsg = 0;
@@ -70,7 +67,7 @@ public:
             return {{},rc};
         }
         std::cout<< "sql ended normally" << std::endl;
-        return std::pair<std::vector<std::vector<std::string>>, int>(move(sql_result_table), rc);
+        return SQL_TABLE(move(sql_result_table), rc);
     }
 };
 

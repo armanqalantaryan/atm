@@ -1,28 +1,27 @@
 #include <iostream>
 #include <memory>
 
-#include "iusermanager.hpp"
+#include "iserverusermanager.hpp"
 
 
-std::unique_ptr<iSocket> createSocket();
+std::unique_ptr<iServerSocket> createServerSocket();
+std::unique_ptr<iServerUserManager> createServerUserManager();
 std::unique_ptr<iSqlDB> createDb();
-std::unique_ptr<iUserManager> createUserManager();
-
 
 int main()
 {
-    std::unique_ptr<iUserManager> um = createUserManager();
-    if(!um->connect_socket(createSocket()))
+    std::unique_ptr<iServerUserManager> sum = createServerUserManager();
+    if(!sum->connectSocket(createServerSocket()))
     {
         std::cerr<<"Connection Error" <<std::endl;
         return -1;
     }
 
-    if(!um->connect_db(createDb()))
+    if(!sum->connectDb(createDb()))
     {
         std::cerr<<"Database Error" <<std::endl;
         return -1;
     }
 
-    um->startServer();
+    sum->startServer();
 }

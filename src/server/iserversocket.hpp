@@ -1,6 +1,7 @@
 #include <string>
 
-class iSocket {
+class iServerSocket 
+{
 public:
     virtual int bind() = 0;
     virtual void listen() = 0;

@@ -1,4 +1,0 @@
-/home/arman/ATM/obj/client/userManager_impl.dep  /home/arman/ATM/obj/client/userManager_impl.o: \
- /home/arman/ATM/src/client/userManager_impl.cpp \
- /home/arman/ATM/src/client/iusermanager.hpp \
- /home/arman/ATM/src/client/isocket.hpp

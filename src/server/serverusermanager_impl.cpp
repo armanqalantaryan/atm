@@ -1,11 +1,9 @@
-#include <iostream>
+#include <vector>
 #include <cassert>
 
-#include "iusermanager.hpp"
-#include "utilities.hpp"
+#include "iserverusermanager.hpp"
 
 using namespace std;
-
 
 namespace {
 
@@ -17,14 +15,29 @@ namespace {
 
     const std::string OK = "1";
     const std::string NOT_OK = "2";
+
+    template<class ...Args>
+    std::string makeSql(Args ...args)
+    {
+        std::string query = "";
+        std::vector<std::string> vec = {args...};
+        for(auto item : vec)
+        {
+            query += item;
+            query += " ";
+        }
+        query += ';';
+        return query;
+    }
+
 }
 
-class UserManagerImpl : public iUserManager
+class ServerUserManagerImpl : public iServerUserManager
 {
-    std::unique_ptr <iSocket> m_socket;
-    std::unique_ptr <iSqlDB> m_db;
-    std::string m_card_number;
-    std::string m_pin;
+    unique_ptr <iServerSocket> m_socket;
+    unique_ptr <iSqlDB> m_db;
+    string m_card_number;
+    string m_pin;
     string m_received_message;
 
 public:
@@ -37,7 +50,7 @@ public:
         }
     }
 
-    bool connect_db(std::unique_ptr <iSqlDB> db) override
+    bool connectDb(std::unique_ptr <iSqlDB> db) override
     {
         m_db = std::move(db);
         m_db->connect(DB_NAME);
@@ -47,23 +60,20 @@ public:
         return (res.second == 0) ? true : false;
     }
 
-    bool connect_socket(std::unique_ptr <iSocket> socket) override
+    bool connectSocket(std::unique_ptr <iServerSocket> socket) override
     {
         m_socket = std::move(socket);
 
         if (m_socket->bind() < 0) {
-            std::cout << "bind error" << std::endl;
             return false;
         }
 
-        std::cout << "bind complete" << std::endl;
         m_socket->listen();
 
         if (m_socket->accept() < 0) {
             return false;
         }
 
-        std::cout << "socket connect" << std::endl;
         return true;
     }
 
@@ -103,7 +113,6 @@ private:
                 if (validate())
                 {
                     std::string amount = m_received_message.substr(17);
-                    std::cout << " cash in amount is *****" << amount << std::endl;
                     cashIn(amount);
                     m_socket->sendMessage(OK);
                 }
@@ -132,17 +141,14 @@ private:
             assert(user_reg.second == 0);
             if (m_socket->sendMessage("1") < 0)
             {
-                std::cout<< "exeption ******"<< 4<<std::endl;
-                throw;
+                assert(false);
             }
         }
         else
         {
-            std::cout << "Card number already exists" << std::endl;
             if (m_socket->sendMessage("2") < 0)
             {
-                std::cout<< "exeption ******"<< 5 <<std::endl;
-                throw;
+                assert(false);
             }
 
         }
@@ -170,7 +176,6 @@ private:
         assert(res.second == 0);
 
         assert(!res.first[0].empty());
-        std::cout << "res.first *****" << res.first[0][0] << std::endl;
 
         std::string balance = res.first[0][0];
         return balance;
@@ -198,13 +203,13 @@ private:
         }
         else
         {
-         return false;
+            return false;
         }
     }
 
 };
 
-std::unique_ptr<iUserManager> createUserManager()
+std::unique_ptr<iServerUserManager> createServerUserManager()
 {
-    return std::unique_ptr<iUserManager>(new UserManagerImpl());
+    return std::make_unique<ServerUserManagerImpl>();
 }

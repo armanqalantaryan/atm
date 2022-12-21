@@ -1,7 +1,3 @@
-//
-// Created by arman on 10/29/22.
-//
-#include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -10,26 +6,25 @@
 #include <memory>
 #include <cstring>
 
-#include "isocket.hpp"
+#include "iclientsocket.hpp"
 
 namespace
 {
-    const char *IP_ADDRESS = "localhost";
-    const int PORT = 1371;
+    const std::string IP_ADDRESS = "localhost";
+    const int PORT = 1372;
 }
 
-class SocketImpl: public iSocket {
+class ClientSocketImpl: public iClientSocket {
 
     sockaddr_in m_sendSockAddr;
     int m_clientSd;
 
 public:
 
-    SocketImpl()
+    ClientSocketImpl()
         : m_clientSd(socket(AF_INET, SOCK_STREAM, 0))
     {
-        const auto& host = gethostbyname(IP_ADDRESS);
-        std::cout<<"socket id" << m_clientSd<<std::endl;
+        const auto& host = gethostbyname(IP_ADDRESS.c_str());
         m_sendSockAddr.sin_addr.s_addr =
                 inet_addr(inet_ntoa(*(struct in_addr*)*host->h_addr_list));
         m_sendSockAddr.sin_port = htons(PORT);
@@ -37,14 +32,13 @@ public:
     }
 
 
-    int sendMessage(const std::string& message)
+    int sendMessage(const std::string& message) override
     {
         return ::send(m_clientSd, (char*)message.c_str(), message.length() + 1, 0);
     }
 
-    bool receiveMessage(std::string& received_message)
+    bool receiveMessage(std::string& received_message) override
     {
-        std::cout << "Awaiting server response..." << std::endl;
         char buff[124];
         memset(buff, 0, sizeof(buff));
 
@@ -54,13 +48,12 @@ public:
         return status;
     }
 
-    void close() 
+    void close() override
     {
         ::close(m_clientSd);
-        std::cout << "Connection closed!" << std::endl;
     }
 
-    int connect()
+    int connect() override
     {
         return ::connect(m_clientSd,
                 (sockaddr*) &m_sendSockAddr, sizeof(m_sendSockAddr));
@@ -68,6 +61,7 @@ public:
 
 };
 
-std::unique_ptr<iSocket> createSocket() {
-    return std::unique_ptr<iSocket>(new SocketImpl());
+std::unique_ptr<iClientSocket> createClientSocket()
+{
+    return std::make_unique<ClientSocketImpl>();
 }

@@ -1,44 +1,49 @@
-#include "iusermanager.hpp"
-#include "isocket.hpp"
-
 #include <iostream>
 #include <cassert>
+
+#include "iclientusermanager.hpp"
+#include "iclientsocket.hpp"
 
 using namespace std;
 
 namespace {
 
-    const std::string PROCESS_REGISTRATION = "1";
-    const std::string PROCESS_CARD = "2";
-    const std::string get_bal = "3";
-    const std::string PROCESS_CASHIN = "4";
-    const std::string PROCESS_CASHOUT = "5";
-    const std::string ex_msg = "6";
-    const std::string OK = "1";
-    const std::string NOT_OK = "2";
+    const string PROCESS_REGISTRATION = "1";
+    const string PROCESS_CARD = "2";
+    const string get_bal = "3";
+    const string PROCESS_CASHIN = "4";
+    const string PROCESS_CASHOUT = "5";
+    const string ex_msg = "6";
+    const string OK = "1";
+    const string NOT_OK = "2";
 }
 
-class UserManagerImpl : public iUserManager
+class ClientUserManagerImpl : public iClientUserManager
 {
-    std::string m_card_number;
-    std::string m_pin;
+    string m_card_number;
+    string m_pin;
 
-    std::unique_ptr<iSocket> m_socket;
+    unique_ptr<iClientSocket> m_socket;
 
-    public:
+public:
 
-    UserManagerImpl()
+    ClientUserManagerImpl()
         :m_socket(nullptr)
     {}
 
-    ~UserManagerImpl()
+    ~ClientUserManagerImpl()
     {
         m_socket->close();
     }
 
+    int connectSocket(std::unique_ptr<iClientSocket> socket) override
+    {
+        m_socket = std::move(socket);
+        return m_socket->connect();
+    }
+
     void runAtm() override
     {
-
         do
         {
             cout << "New card registration, press 1" << endl;
@@ -52,13 +57,13 @@ class UserManagerImpl : public iUserManager
             {
                 case 1 :
                 {
-                    if(process_registration())
+                    if(processRegistration())
                     {
-                        std::cout << "Card Registered" << std::endl;
+                        std::cout << "--- Card Registered ---" << std::endl;
                     }
                     else
                     {
-                        std::cout <<"Card Already exists. Try Another Card Number" << std::endl;
+                        std::cout <<"--- Card Already exists. Try Another Card Number ---" << std::endl;
                         continue;
                     }
                 }
@@ -66,7 +71,7 @@ class UserManagerImpl : public iUserManager
 
                 case 2 :
                 {
-                    if (process_card())
+                    if (processCard())
                     {
                         bool exit = false;
                         do
@@ -85,8 +90,8 @@ class UserManagerImpl : public iUserManager
                             {
                                 case 1:
                                 {
-                                    double balance = get_balance();
-                                    cout << "Balance is: " << balance << endl;
+                                    double balance = getBalance();
+                                    cout << "--- Balance is: --- " << balance << endl;
                                 }
                                 break;
 
@@ -95,11 +100,11 @@ class UserManagerImpl : public iUserManager
                                     cout << "Insert amount: ";
                                     int amount;
                                     cin >> amount;
-                                    bool res = cash_in(amount);
+                                    bool res = cashIn(amount);
                                     if (res)
-                                        cout << "Your amount is successfully set" << endl;
+                                        cout << "--- Your amount is successfully set ---" << endl;
                                     else
-                                        cout << "Failed transaction" << endl;
+                                        cout << "--- Failed transaction ---" << endl;
                                 }
                                 break;
 
@@ -108,11 +113,11 @@ class UserManagerImpl : public iUserManager
                                     cout << "Insert amount: ";
                                     int amount;
                                     cin >> amount;
-                                    bool res = cash_out(amount);
+                                    bool res = cashOut(amount);
                                     if (res)
-                                        cout << "Take your cash!" << endl;
+                                        cout << "--- Take your cash! ---" << endl;
                                     else
-                                        cout << "Failed transaction" << endl;
+                                        cout << "--- Not enough amount ---" << endl;
                                 }
                                 break;
 
@@ -127,7 +132,7 @@ class UserManagerImpl : public iUserManager
                     }
                     else
                     {
-                        cout << "Invalid card number or pin, try again" << endl;
+                        cout << "--- Invalid card number or pin, try again ---" << endl;
                         continue;
                     }
                 }
@@ -137,7 +142,10 @@ class UserManagerImpl : public iUserManager
         } while(true);
 
     }
-    void setCredentials() override
+
+private:
+
+    void setCredentials()
     {
         std::string card_number;
         std::string pin;
@@ -147,7 +155,7 @@ class UserManagerImpl : public iUserManager
             cin >> card_number;
             if (card_number.size() != 12)
             {
-                cout << "Invalid card input, must be 12 symbols" << endl;
+                cout << "--- Invalid card input, must be 12 symbols ---" << endl;
                 continue;
             }
             break;
@@ -161,7 +169,7 @@ class UserManagerImpl : public iUserManager
 
             if (pin.size() != 4)
             {
-                cout << "Invalid pin input, must be 4 symbols" << endl;
+                cout << "--- Invalid pin input, must be 4 symbols ---" << endl;
                 continue;
             }
 
@@ -173,7 +181,7 @@ class UserManagerImpl : public iUserManager
         m_pin = pin;
     }
 
-    bool process_registration() override
+    bool processRegistration()
     {
         std::string mes = PROCESS_REGISTRATION;
         mes += m_card_number;
@@ -188,7 +196,7 @@ class UserManagerImpl : public iUserManager
         return (mes == "1") ? true : false;
     }
 
-    bool process_card() override
+    bool processCard()
     {
         std::string mes = PROCESS_CARD;
         mes += m_card_number;
@@ -202,7 +210,7 @@ class UserManagerImpl : public iUserManager
         return mes == OK ? true : false;
     }
 
-    bool cash_in(int amount) override
+    bool cashIn(int amount)
     {
         std::string mes = PROCESS_CASHIN;
         mes += m_card_number;
@@ -210,14 +218,14 @@ class UserManagerImpl : public iUserManager
         mes += to_string(amount);
         int response = m_socket->sendMessage(mes);
         assert(response > 0);
-        
+
         response = m_socket->receiveMessage(mes);
         assert(response > 0);
 
         return mes == OK ? true : false;
     }
 
-    bool cash_out(int amount) override
+    bool cashOut(int amount)
     {
         std::string mes = PROCESS_CASHOUT;
         mes += m_card_number;
@@ -232,7 +240,7 @@ class UserManagerImpl : public iUserManager
         return mes == OK ? true : false;
     }
 
-    double get_balance() override
+    double getBalance()
     {
         std::string mes = get_bal;
         mes += m_card_number;
@@ -241,25 +249,18 @@ class UserManagerImpl : public iUserManager
 
         if(response < 0)
         {
-            throw;
+            assert(false);
         }
         response = m_socket->receiveMessage(mes);
-        std::cout << "balance is -----   " << mes << std::endl;
         if(response < 0)
         {
-            throw;
+            assert(false);
         }
-         return atoi(mes.c_str());
-    }
-
-    int connect_socket(std::unique_ptr<iSocket> socket) override
-    {
-        m_socket = std::move(socket);
-        return m_socket->connect();
+        return atoi(mes.c_str());
     }
 };
 
-std::unique_ptr<iUserManager> createUserManager()
+std::unique_ptr<iClientUserManager> createClientUserManager()
 {
-    return std::make_unique<UserManagerImpl>();
+    return std::make_unique<ClientUserManagerImpl>();
 }

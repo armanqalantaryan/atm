@@ -5,18 +5,17 @@
 #include <memory>
 #include <cstring>
 
-#include "isocket.hpp"
+#include "iserversocket.hpp"
 
 
 using namespace std;
 
 namespace
 {
-    const char *IP_ADDRESS = "localhost";
-    const int PORT = 1371;
+    const int PORT = 1372;
 }
 
-class SocketImpl: public iSocket {
+class ServerSocketImpl: public iServerSocket {
 
     sockaddr_in m_servAddr;
     int m_serverSd;
@@ -24,7 +23,7 @@ class SocketImpl: public iSocket {
 
 public:
 
-    SocketImpl()
+    ServerSocketImpl()
             : m_serverSd(socket(AF_INET, SOCK_STREAM, 0))
     {
         bzero((char*)&m_servAddr, sizeof(m_servAddr));
@@ -37,14 +36,11 @@ public:
     {
         int bindStatus = ::bind(m_serverSd, (struct sockaddr*) &m_servAddr,
                               sizeof(m_servAddr));
-        std::cout<<"server bind  "<<bindStatus<<std::endl;
         return bindStatus;
     }
 
     virtual void listen() override
     {
-        //listen for up to 5 requests at a time
-        std::cout<<"server listen"<<std::endl;
         ::listen(m_serverSd, 5);
     }
 
@@ -53,7 +49,6 @@ public:
         sockaddr_in clientSockaddr_in;
         socklen_t clientSockAddrSize = sizeof(clientSockaddr_in);
         m_clientSd = ::accept(m_serverSd, (sockaddr *)&clientSockaddr_in, &clientSockAddrSize);
-        std::cout<<"server accept socket = " << m_clientSd <<std::endl;
         return m_clientSd;
     }
         
@@ -61,7 +56,6 @@ public:
     {
         ::close(m_clientSd);
         ::close(m_serverSd);
-        std::cout << "Connection closed..." << std::endl;
     }
 
     int sendMessage(const std::string& message) override
@@ -81,7 +75,7 @@ public:
     }
 };
 
-std::unique_ptr<iSocket> createSocket()
+std::unique_ptr<iServerSocket> createServerSocket()
 {
-    return std::unique_ptr<SocketImpl>(new SocketImpl());
+    return std::make_unique<ServerSocketImpl>();
 }
