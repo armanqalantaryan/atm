@@ -1,4 +1,0 @@
-/home/arman/ATM/obj/server/sqldb_impl.dep  /home/arman/ATM/obj/server/sqldb_impl.o: \
- /home/arman/ATM/src/server/sqldb_impl.cpp \
- /home/arman/ATM/src/server/sqlite3.h \
- /home/arman/ATM/src/server/isqldb.hpp

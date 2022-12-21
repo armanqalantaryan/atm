@@ -1,5 +1,0 @@
-/home/arman/ATM/obj/server/main.dep  /home/arman/ATM/obj/server/main.o: \
- /home/arman/ATM/src/server/main.cpp \
- /home/arman/ATM/src/server/iserverusermanager.hpp \
- /home/arman/ATM/src/server/iserversocket.hpp \
- /home/arman/ATM/src/server/isqldb.hpp
